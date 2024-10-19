@@ -1,9 +1,10 @@
-import boto3, os
+import boto3, os, time
 from dotenv import load_dotenv, dotenv_values 
 from pathlib import Path
 
 # loading variables from .env file
 load_dotenv() 
+
 
 class database_connection():
     def __init__(self):
@@ -26,7 +27,7 @@ class database_connection():
         # Function to run a general query
     def run_athena_query(self, query, database, s3_output_location):
         # Start the query execution
-        response = athena_client.start_query_execution(
+        response = self.athena_client.start_query_execution(
             QueryString=query,
             QueryExecutionContext={
                 'Database': database  # Specify the database in which the query is run
@@ -41,11 +42,11 @@ class database_connection():
         print(f"Query execution ID: {query_execution_id}")
         
         # Wait for the query to finish
-        status = wait_for_query_to_complete(query_execution_id)
+        status = self.wait_for_query_to_complete(query_execution_id)
         
         if status == 'SUCCEEDED':
             # Get the query results
-            results = get_query_results(query_execution_id)
+            results = self.get_query_results(query_execution_id)
             return results
         else:
             print(f"Query failed with status: {status}")
@@ -55,7 +56,9 @@ class database_connection():
     def wait_for_query_to_complete(self, query_execution_id):
         while True:
             # Get the execution status of the query
-            response = athena_client.get_query_execution(QueryExecutionId=query_execution_id)
+            response = self.athena_client.get_query_execution(QueryExecutionId=query_execution_id)
+            
+            print(response)
             status = response['QueryExecution']['Status']['State']
             
             if status in ['SUCCEEDED', 'FAILED', 'CANCELLED']:
@@ -69,7 +72,7 @@ class database_connection():
         results = []
         
         # Fetch the query results from Athena
-        response = athena_client.get_query_results(QueryExecutionId=query_execution_id)
+        response = self.athena_client.get_query_results(QueryExecutionId=query_execution_id)
         
         # Extract the rows
         rows = response['ResultSet']['Rows']
@@ -80,4 +83,24 @@ class database_connection():
         return results
         
         
-    
+db = database_connection()
+db.db_path = Path("s3://hackathon_f2024_baal_database")
+
+db.run_athena_query(
+    """
+    CREATE EXTERNAL TABLE Users (
+        id INT,
+        username VARCHAR(255),
+        email VARCHAR(255),
+        password VARCHAR(255)
+    )
+    ROW FORMAT DELIMITED
+    FIELDS TERMINATED BY ','
+    LINES TERMINATED BY '\\n'
+    STORED AS TEXTFILE
+    LOCATION 's3://hackathon-f2024-baal/database/user/';
+    """,
+    "hackathon_f2024_baal_database",
+    "s3://hackathon-f2024-baal/database"
+)
+
