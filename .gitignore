@@ -1,3 +1,15 @@
 
 # Environment Variables
 *.env
+
+# Node Modules
+node_modules
+
+.DS_Store
+
+# Webpack
+stats.json
+
+/dist
+
+.vscode
