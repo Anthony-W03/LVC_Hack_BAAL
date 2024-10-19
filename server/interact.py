@@ -1,26 +1,4 @@
-import itertools, uuid, re
-from typing import (Optional, 
-                    Tuple, 
-                    Self)
-from pathlib import Path
-
-class UniqueID:
-    _class_counters = {}
-
-    def __init__(self):
-        cls = self.__class__
-        if cls not in UniqueID._class_counters:
-            UniqueID._class_counters[cls] = uuid.uuid4()
-        self.id = UniqueID._class_counters[cls]
-        UniqueID._class_counters[cls] = uuid.uuid4()
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}(id={self.id})"
-    
-    @property
-    def str_id(self):
-        return str(self.id)
-    
+   
 class user():
     def __init__(self, id: int):
         self.id = id
