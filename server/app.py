@@ -1,11 +1,50 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+from interact import User, Network
 
 app = Flask(__name__)
+CORS(app)  # This allows CORS for all domains on all routes
 
-@app.route('/')
-def index():
-    data = {}
-    return render_template('index.html', data=data)
+@app.route('/api/node/<node_id>', methods=['GET'])
+def get_user_info(user_id: int):
+    # Create a user object. (If the user exists)
+    user = User(user_id)
+    
+    # Does the user exist.
+    if not user.exists(): 
+        return None
+    
+    # Get the users info.
+    ## We assume this includes: fname, lname, email, and id.
+    info = user.get_personal_info()
+    
+    # Get the user info.
+    user_data = {
+        'id': info.id,
+        'fname': info.fname,
+        'lname': info.lname,
+        'email': info.email
+    }
+    
+    # Return as a json object.
+    return jsonify(user_data)
 
-if __name__ == '__main__':  
-   app.run()  
+
+@app.route('/api/graph', methods=['GET'])
+def get_graph_data(user_id: int, network_id: int):
+    # Create a user object. (If the user exists)
+    user = User(user_id)    
+    if not user.exists(): # Does the user exist.
+        return None
+    
+    # Create the network object. (If the network exists)
+    net = Network(user_id, network_id)    
+    if not net.exists(): # Does the user exist.
+        return None
+    
+    # Query and Init the network. Return the graph/adjacency list.
+    net.init_network()
+    return jsonify(net.network)
+
+if __name__ == '__main__':
+    app.run(debug=True)
