@@ -16,4 +16,5 @@ cursor = conn.cursor()
 cursor.execute("SELECT version();")
 db_version = cursor.fetchone()
 print(f"Connected to PostgreSQL database, version: {db_version}")
+conn.close()
 
