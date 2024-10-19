@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import NetworkVisualizer from './components/NetworkVisualizer';
+import NetworkVisualizer from './components/NetworkViz';
 
 function App() {
   return (
