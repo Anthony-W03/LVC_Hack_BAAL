@@ -86,6 +86,8 @@ class database_connection():
 db = database_connection()
 db.db_path = Path("s3://hackathon_f2024_baal_database")
 
+
+'''
 db.run_athena_query(
     """
     CREATE EXTERNAL TABLE Users (
@@ -98,9 +100,10 @@ db.run_athena_query(
     FIELDS TERMINATED BY ','
     LINES TERMINATED BY '\\n'
     STORED AS TEXTFILE
-    LOCATION 's3://hackathon-f2024-baal/database/user/';
+    LOCATION 's3://athena-hackathon-f2024-baal/database/user/';
     """,
     "hackathon_f2024_baal_database",
-    "s3://hackathon-f2024-baal/database"
+    "s3://athena-hackathon-f2024-baal/database"
 )
+'''
 
