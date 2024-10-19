@@ -7,5 +7,6 @@ def index():
     data = {}
     return render_template('index.html', data=data)
 
+
 if __name__ == '__main__':  
    app.run()  
