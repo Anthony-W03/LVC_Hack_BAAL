@@ -117,16 +117,6 @@ CREATE TABLE connections (
 print(test2)
 '''
 
-connections = 'SELECT network_id, fname, lname, email FROM connections WHERE id = ?;'
-useer = 'SELECT username, fname, lname, email FROM useraccounts WHERE id = ?;'
-
-test3 = db.query(
-"""
-SELECT network_id, fname, lname, email FROM connections WHERE id = ?, 
-"""
-)
-print(test3)
-
 
 '''
 test = db.copy(
@@ -154,10 +144,10 @@ print(test)
 '''
 
 '''
-test2 = db.query(
+db.query(
 """
 CREATE TABLE connections (
-    id INT PRIMARY KEY,
+    id VARCHAR(255) PRIMARY KEY,
     user_id INT,
     network_id INT,
     fname VARCHAR(255),
@@ -175,20 +165,32 @@ CREATE TABLE connections (
 
 """
 )
-print(test2)
 '''
 
+'''
 db.copy(
 """
-COPY connections(id, user_id, network_id, fname, lname, connection_through, linkedin, website, email, phone, address, employment)
+COPY connections(id,
+    user_id,
+    network_id,
+    fname,
+    lname,
+    connection_through,
+    linkedin,
+    website,
+    email,
+    phone,
+    address,
+    employment)
 FROM STDIN
 DELIMITER ','
 CSV;
 """,
 "../Data/Connections.csv"
 )
+'''
 
-
+'''
 test4 = db.query(
 """
 SELECT * FROM networks;
@@ -209,5 +211,48 @@ SELECT * FROM connections;
 """
 )
 print(test4)
+'''
 
+username = 'John_Doe'
+password = 'pw1'
+test = db.query(
+"""
+SELECT *
+FROM useraccounts
+WHERE username = '%s'
+AND password = '%s';
+""" % (username, password)
+)
+print(test)
+
+
+idno = 12345
+test = db.query(
+"""
+SELECT *
+FROM useraccounts
+WHERE id = %d
+""" % idno
+)
+print(test)
+
+idno = 12345
+test = db.query(
+"""
+SELECT *
+FROM networks
+WHERE user_id = %d
+""" % idno
+)
+print(test)
+
+idno = '12345'
+test = db.query(
+"""
+SELECT *
+FROM connections
+WHERE user_id = '%s'
+""" % idno
+)
+print(test)
 
