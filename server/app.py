@@ -2,7 +2,6 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from postgres_utils import sqlUtils
 from dataclasses import dataclass
-from psycopg2 import sql
 
 # Create our internal App.
 app = Flask(__name__)
@@ -37,6 +36,7 @@ def validate_login(email: str, password: str):
     results = db.query(cmd)
     if len(results) == 1:
         # for current_users
+        current_user['user_id'] = results[0][0]
         current_user['username'] = results[0][1]
         current_user['fname'] = results[0][2]
         current_user['lname'] = results[0][3]

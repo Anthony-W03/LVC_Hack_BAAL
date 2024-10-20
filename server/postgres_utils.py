@@ -1,10 +1,14 @@
 import psycopg2
 import boto3, os, time
-from dotenv import load_dotenv, dotenv_values 
-
+from dotenv import load_dotenv, dotenv_values
+from pathlib import Path
 
 # loading variables from .env file
 load_dotenv() 
+
+def get_query(path: Path):
+    with open('', 'r') as fd:
+        pass
 
 class sqlUtils():
     def __init__(self):
