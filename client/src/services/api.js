@@ -1,25 +1,5 @@
 import axios from 'axios';
-
 const API_BASE_URL = 'http://localhost:5000/api';
-
-/**
- * 
- * @param {int} userID 
- * @param {int} networkID 
- * @returns Json Object: {}
- */
-export const fetchNetworkData = (userID, networkID) => {
-  return axios.get(`${API_BASE_URL}/fetch/network`);
-};
-
-/**
- * 
- * @param {int} userId 
- * @returns Json Object: {'id': int, 'fname': string, 'lname': string, 'email': string}
- */
-export const fetchNodeDetails = (userId) => {
-  return axios.get(`${API_BASE_URL}/fetch/user/${userId}`);
-};
 
 /**
  * 
@@ -33,12 +13,11 @@ export const isLogin = (email, password) => {
 
 /**
  * 
- * @param {int} connectionID 
- * @param {int} networkID 
- * @returns Json Object: {}
+ * @param {int} userId 
+ * @returns Json Object: {'id': int, 'fname': string, 'lname': string, 'email': string}
  */
-export const updateConnection = (connectionID, networkID) => {
-  return axios.post(`${API_BASE_URL}/update/connection`, { connectionID, networkID });
+export const fetchUser = (userID) => {
+  return axios.get(`${API_BASE_URL}/fetch/user/`, { userID });
 };
 
 /**
@@ -47,8 +26,37 @@ export const updateConnection = (connectionID, networkID) => {
  * @param {int} networkID 
  * @returns Json Object: {}
  */
-export const createNetwork = (userID, networkID) => {
-  return axios.post(`${API_BASE_URL}/create/network`, { userID, networkID });
+export const fetchNetwork = (userID, networkID) => {
+  return axios.get(`${API_BASE_URL}/fetch/network`, { userID, networkID });
+};
+
+/**
+ * 
+ * @param {int} userID
+ * @returns Json Object: {}
+ */
+export const createNetwork = (userID) => {
+  return axios.post(`${API_BASE_URL}/create/network`, { userID });
+};
+
+
+/**
+ * 
+ * @param {int} userId 
+ * @returns Json Object: {'id': int, 'fname': string, 'lname': string, 'email': string}
+ */
+export const fetchConnection = (connID) => {
+  return axios.get(`${API_BASE_URL}/fetch/connection/`, { connID });
+};
+
+/**
+ * 
+ * @param {int} connectionID 
+ * @param {int} networkID 
+ * @returns Json Object: {}
+ */
+export const updateConnection = (connectionID, networkID) => {
+  return axios.post(`${API_BASE_URL}/update/connection`, { connectionID, networkID });
 };
 
 /**

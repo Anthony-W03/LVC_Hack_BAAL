@@ -5,6 +5,21 @@ from interact import User, Network
 app = Flask(__name__)
 CORS(app)  # This allows CORS for all domains on all routes
 
+## User
+@app.route('/api/validate/login', methods=['GET'])
+@app.route('/api/fetch/user', methods=['GET'])
+
+## Networks
+@app.route('/api/fetch/network', methods=['GET'])
+@app.route('/api/create/network', methods=['GET'])
+
+## Connections
+@app.route('/api/fetch/connection', methods=['GET'])
+@app.route('/api/update/connection', methods=['GET'])
+@app.route('/api/create/connection', methods=['GET'])
+
+#####
+########
 @app.route('/api/node/<node_id>', methods=['GET'])
 def get_user_info(user_id: int):
     # Create a user object. (If the user exists)
