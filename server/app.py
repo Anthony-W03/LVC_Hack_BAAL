@@ -9,11 +9,6 @@ CORS(app)  # This allows CORS for all domains on all routes
 # Create database interaction utils.
 db = sqlUtils()
 
-
-connections = 'SELECT network_id, fname, lname, email FROM connections WHERE id = ?;'
-base_user = 'SELECT username, fname, lname, email FROM useraccounts WHERE id = ?;'
-user = 'SELECT username, fname, lname, email FROM useraccounts WHERE email = ?, password = ?;'
-
 # Set some important variables.
 is_current_user = False
 current_user = {'user_id':None,
@@ -22,6 +17,21 @@ current_user = {'user_id':None,
                 'fname':None,
                 'lname':None}
 networks = {}
+
+@dataclass
+class User:
+    pass
+
+@dataclass
+class Network:
+    pass
+
+@dataclass
+class Connection:
+    pass
+
+def is_datatype(tuple, datatype) -> bool:
+    all
 
 ## User
 @app.route('/api/validate/login', methods=['GET'])
@@ -36,7 +46,6 @@ def validate_login(email: str, password: str):
         print("Invalid Login Attempt.")
         return jsonify({'vaildLogin': False, 'userID': -1})
         
-    
 
 @app.route('/api/fetch/user', methods=['GET'])
 def fetch_user(user_id: int):
@@ -108,9 +117,11 @@ def fetch_connections_menu(user_id: int, network_id: int):
 
 if __name__ == '__main__':
     db.connect()
-    email = ''
-    password = ''
-    validate_login(email, password)
+    email = 'JohnDoe42@gmail.com'
+    password = 'pw1'
+    cmd = f'''SELECT username, fname, lname, email FROM useraccounts WHERE email = \"{email}\" AND password = \"{password}\";'''
+    print(cmd)
+    print(db.query(cmd))
     app.run(debug=True)
     db.close() # Close the connection after the app is closed. Note: This is not ideal.
     
