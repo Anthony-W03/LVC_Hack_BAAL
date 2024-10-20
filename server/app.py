@@ -101,7 +101,7 @@ def get_graph_data(user_id: int, network_id: int):
     return None
 
 @app.route('/fetch/connection-menu', methods=['GET'])
-def get_graph_data(user_id: int, network_id: int):
+def fetch_connections_menu(user_id: int, network_id: int):
     menu = [{'connection_id': -1, 'fname':"fname", "lname":"lname", "email":"email"},
             {'connection_id': -2, 'fname':"fname2", "lname":"lname2", "email":"email2"}]
     return jsonify(menu)

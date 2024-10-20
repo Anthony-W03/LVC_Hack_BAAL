@@ -76,6 +76,6 @@ export const createConnection = (userID, networkID) => {
  * @param {*} connectionID 
  * @returns 
  */
-export const fetchConnMenu = (userID, networkID, connectionID) => {
+export const fetchConnectionMenu = (userID, networkID, connectionID) => {
   return axios.get(`${API_BASE_URL}/fetch/connection-menu`, { userID, networkID, connectionID });
 }
