@@ -117,17 +117,12 @@ CREATE TABLE connections (
 print(test2)
 '''
 
+connections = 'SELECT network_id, fname, lname, email FROM connections WHERE id = ?;'
+useer = 'SELECT username, fname, lname, email FROM useraccounts WHERE id = ?;'
 
 test3 = db.query(
 """
-SELECT table_name, column_name
-    FROM information_schema.columns
-WHERE table_name IN (
-  SELECT table_name
-    FROM information_schema.tables
-  WHERE table_type = 'BASE TABLE'
-    AND table_schema NOT IN
-        ('pg_catalog', 'information_schema'));
+SELECT network_id, fname, lname, email FROM connections WHERE id = ?, 
 """
 )
 print(test3)
