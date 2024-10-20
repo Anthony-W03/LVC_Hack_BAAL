@@ -143,11 +143,13 @@ CSV;
 print(test)
 '''
 
+
+
 '''
 db.query(
 """
 CREATE TABLE connections (
-    id VARCHAR(255) PRIMARY KEY,
+    id INT PRIMARY KEY,
     user_id INT,
     network_id INT,
     fname VARCHAR(255),
@@ -215,7 +217,7 @@ print(test4)
 
 username = 'John_Doe'
 password = 'pw1'
-test = db.query(
+pickling = db.query(
 """
 SELECT *
 FROM useraccounts
@@ -223,7 +225,7 @@ WHERE username = '%s'
 AND password = '%s';
 """ % (username, password)
 )
-print(test)
+print(pickling(0))
 
 
 idno = 12345
