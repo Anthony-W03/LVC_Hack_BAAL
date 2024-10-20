@@ -238,7 +238,6 @@ WHERE id = %d
 )
 print(test)
 
-idno = pickler
 test = db.query(
 """
 SELECT *
