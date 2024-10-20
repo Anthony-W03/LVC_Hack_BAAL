@@ -39,6 +39,7 @@ class sqlUtils():
             self.open = False
         else: return    
         
+    # USE: select statements
     def query(self, cmd: str, args: list = []):
         if self.open == False: return None
         try: 
@@ -48,6 +49,7 @@ class sqlUtils():
         except:
             return None
 
+    # USE: insert, copy, drop, create, other actions with no expected return
     def other_action(self, cmd: str, args: list = []):
         if self.open == False: return -1
         try: 
