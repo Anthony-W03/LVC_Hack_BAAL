@@ -39,7 +39,7 @@ def validate_login(email: str, password: str):
         current_user['fname'] = results[0][2]
         current_user['lname'] = results[0][3]
         current_user['email'] = results[0][4]
-        current_user['password'] = results[0][0]
+        current_user['password'] = results[0][5]
         is_current_user = True
         return jsonify({'vaildLogin': True, 'userID': -1})
     else:
