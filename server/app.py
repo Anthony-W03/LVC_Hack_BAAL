@@ -121,7 +121,6 @@ def fetch_connections_menu(user_id: int, network_id: int):
 
 if __name__ == '__main__':
     db.connect()
-    print(validate_login('JohnDoe42@gmail.com', 'pw1'))
     app.run(debug=True)
     db.close() # Close the connection after the app is closed. Note: This is not ideal.
     
