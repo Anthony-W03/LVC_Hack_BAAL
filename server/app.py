@@ -21,8 +21,7 @@ current_user = {'user_id':None,
                 'username':None}
 networks = {}
 
-def build_user_networks():
-    pass
+# Get a new incremented id, per some id field.
 
 ## User
 @app.route('/api/validate/login', methods=['GET'])
@@ -36,70 +35,75 @@ def validate_login(email: str, password: str):
     results = db.query(cmd)
     if len(results) == 1:
         # for current_users
-        current_user['user_id'] = results[0][0]
         current_user['username'] = results[0][1]
         current_user['fname'] = results[0][2]
         current_user['lname'] = results[0][3]
         current_user['email'] = results[0][4]
         current_user['password'] = results[0][0]
-        
-
+        is_current_user = True
         return jsonify({'vaildLogin': True, 'userID': -1})
     else:
         # There was not a valid login.
         print("Invalid Login Attempt.")
         return jsonify({'vaildLogin': False, 'userID': -1})
-        
+    
+# Clear all variables. There is no current user.
+def logout():
+    is_current_user = False
+    current_user = {'user_id':None,
+                'email':None,
+                'password':None,
+                'fname':None,
+                'lname':None,
+                'username':None}
+    networks = {}
+    
 
 @app.route('/api/fetch/user', methods=['GET'])
-def fetch_user(user_id: int):
-    # Create a user object. (If the user exists)
-    user = User(user_id)
-    
-    # Does the user exist.
-    if not user.exists(): 
-        return None
-    
-    # Get the users info.
-    ## We assume this includes: fname, lname, email, and id.
-    info = user.get_personal_info()
-    
-    # Get the user info.
-    user_data = {
-        'id': info.id,
-        'fname': info.fname,
-        'lname': info.lname,
-        'email': info.email
-    }
-    
-    # Return as a json object.
-    return jsonify(user_data)
+def fetch_user():
+    # Fetch the current users
+    if not is_current_user: 
+        return jsonify('null')
+    else:
+        return jsonify(current_user)
 
 ## Networks
 @app.route('/api/fetch/network', methods=['GET'])
 def fetch_network(network_id):
-    
-    pickling = db.query(
+    # query all relevant connections.
+    cmd = db.query(
         """
         SELECT *
         FROM connections
         WHERE user_id = %d
         AND network_id = %d
-        """ % (current_user['user_id'])
+        """ % (current_user['user_id'], network_id)
     )
+    results = db.query(cmd)
     
-    network = {
-    'nodes': [
-      { 'id': 'You', 'name': 'You' },
-      { 'id': 'Alice', 'name': 'Alice' },
-      { 'id': 'Bob', 'name': 'Bob' },
-      { 'id': 'Charlie', 'name': 'Charlie' },
-    ],
-    'links': [
-      { 'source': 'You', 'target': 'Alice' },
-      { 'source': 'You', 'target': 'Bob' },
-      { 'source': 'Alice', 'target': 'Charlie' },
-    ]}
+    # The internal network data
+    network = {'nodes':[], 'links':[]}
+    
+    # Add the current user to the network nodes.
+    network['nodes'].append({'id':current_user['user_id'], 'name':current_user['username']})
+    
+    # method to add new node to the network
+    def add_connection(conn_id: int, name: str, target: int):
+        if target <= 0: # This connection points directly at the user.
+            target = current_user['user_id']
+            
+        # Add the node details.
+        network['nodes'].append({'id':conn_id, 'name':name})
+        
+        # Add the link details.
+        network['links'].append({'source':conn_id, 'target':target})
+
+    # Populate the network dictionary.
+    for connection in results:
+        name = f"{connection['fname']} {connection['lname']}"
+        add_connection(conn_id=connection['id'], name=name, target=connection['connected_through'] )
+    
+    # Return the json network
     return jsonify(network)
 
 @app.route('/api/create/network', methods=['GET'])

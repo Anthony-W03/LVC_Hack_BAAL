@@ -13,11 +13,10 @@ export const isLogin = (email, password) => {
 
 /**
  * 
- * @param {int} userId 
  * @returns Json Object: {'id': int, 'fname': string, 'lname': string, 'email': string}
  */
-export const fetchUser = (userID) => {
-  return axios.get(`${API_BASE_URL}/fetch/user/`, { userID });
+export const fetchUser = () => {
+  return axios.get(`${API_BASE_URL}/fetch/user/`);
 };
 
 /**
