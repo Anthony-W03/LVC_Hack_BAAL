@@ -120,7 +120,7 @@ def create_network(name):
 
     new_max_id = get_next_id("networks")
 
-    db.query(
+    db.other_action(
         """
         INSERT INTO networks(id, name, user_id)
         VALUES (%d, %s, %d)

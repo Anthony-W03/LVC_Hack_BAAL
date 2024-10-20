@@ -48,6 +48,15 @@ class sqlUtils():
         except:
             return None
 
+    def other_action(self, cmd: str, args: list = []):
+        if self.open == False: return -1
+        try: 
+            curr = self.connection.cursor()
+            curr.execute(cmd, args)
+            return None
+        except:
+            return -1
+
 
 
 
