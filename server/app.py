@@ -52,7 +52,7 @@ def fetch_network():
       { 'source': 'You', 'target': 'Bob' },
       { 'source': 'Alice', 'target': 'Charlie' },
     ]}
-    return network
+    return jsonify(network)
 
 @app.route('/api/create/network', methods=['GET'])
 def create_network():

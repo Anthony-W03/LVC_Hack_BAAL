@@ -1,11 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './AddNodeButton.css';
+import AddNodeMenu from './AddNodeButtonMenu'; // We'll create this component next
 
-const AddNodeButton = ({ onClick }) => {
+const AddNodeButton = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <button className="add-node-button" onClick={onClick}>
-      Add Node
-    </button>
+    <div className="add-node-container">
+      <button className="add-node-button" onClick={toggleMenu}>
+        Add Node
+      </button>
+      {isMenuOpen && <AddNodeMenu onClose={() => setIsMenuOpen(false)} />}
+    </div>
   );
 };
 
