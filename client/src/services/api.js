@@ -62,10 +62,11 @@ export const updateConnection = (connectionID, networkID) => {
 /**
  * 
  * @param {int} userID 
- * @param {int} networkID 
+ * @param {int} networkID
+ * 
  * @returns Json Object: {}
  */
-export const createConnection = (userID, networkID) => {
+export const createConnection = (networkID, email, fname, lname, source, target) => {
   return axios.post(`${API_BASE_URL}/create/connection`, { userID, networkID });
 };
 
