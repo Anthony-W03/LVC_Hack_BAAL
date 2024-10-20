@@ -1,4 +1,4 @@
-# LVC_Hack_BAAL - Professional Network Visualizer
+# BAAL - Professional Network Visualizer
 
 ## Idea
 
