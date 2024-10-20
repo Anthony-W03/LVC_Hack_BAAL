@@ -40,7 +40,18 @@ class sqlUtils():
             curr = self.connection.cursor()
             curr.execute(cmd)
             return curr.fetchall()
-        except:
+        except psycopg2.OperationalError as e:
+            print('Unable to connect!\n{0}').format(e)
+            return None
+
+    def copy(self, cmd:str, filepath: str):
+        if self.open == False: return None
+        try:
+            curr = self.connection.cursor()
+            curr.copy_expert(cmd, open(filepath, "r"))
+            return 0
+        except psycopg2.OperationalError as e:
+            print('Unable to connect!\n{0}').format(e)
             return None
         
 
@@ -48,6 +59,12 @@ db = sqlUtils()
 db.connect()
 
 '''
+db.query(
+    """
+    DROP TABLE useraccounts CASCADE;
+    """
+)
+
 test1 = db.query(
 """
 CREATE TABLE useraccounts (
@@ -55,12 +72,13 @@ CREATE TABLE useraccounts (
     username VARCHAR(255),
     fname VARCHAR(255),
     lname VARCHAR(255),
-    email VARCHAR(255),
+    email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255)
 );
 """
 )
 print(test1)
+
 
 test2 = db.query(
 """
@@ -115,7 +133,86 @@ WHERE table_name IN (
 print(test3)
 
 
+'''
+test = db.copy(
+"""
+COPY useraccounts(id, username, fname, lname, email, password)
+FROM STDIN
+DELIMITER ','
+CSV;
+""",
+"../Data/Users.csv"
+)
+print(test)
 
 
+test = db.copy(
+"""
+COPY networks(id, name, user_id)
+FROM STDIN
+DELIMITER ','
+CSV;
+""",
+"../Data/Networks.csv"
+)
+print(test)
+'''
+
+'''
+test2 = db.query(
+"""
+CREATE TABLE connections (
+    id INT PRIMARY KEY,
+    user_id INT,
+    network_id INT,
+    fname VARCHAR(255),
+    lname VARCHAR(255),
+    connection_through INT,
+    linkedin VARCHAR(255),
+    website VARCHAR(255),
+    email VARCHAR(255),
+    phone VARCHAR(255),
+    address VARCHAR(255),
+    employment VARCHAR(255),
+    FOREIGN KEY (user_id) REFERENCES useraccounts(id),
+    FOREIGN KEY (network_id) REFERENCES networks(id)
+);
+
+"""
+)
+print(test2)
+'''
+
+db.copy(
+"""
+COPY connections(id, user_id, network_id, fname, lname, connection_through, linkedin, website, email, phone, address, employment)
+FROM STDIN
+DELIMITER ','
+CSV;
+""",
+"../Data/Connections.csv"
+)
+
+
+test4 = db.query(
+"""
+SELECT * FROM networks;
+"""
+)
+print(test4)
+
+test4 = db.query(
+"""
+SELECT * FROM useraccounts;
+"""
+)
+print(test4)
+
+test4 = db.query(
+"""
+SELECT * FROM connections;
+"""
+)
+print(test4)
 
 
