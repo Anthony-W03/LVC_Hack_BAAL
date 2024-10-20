@@ -225,10 +225,10 @@ WHERE username = '%s'
 AND password = '%s';
 """ % (username, password)
 )
-print(pickling(0))
+print(pickling[0][0])
+pickler = pickling[0][0]
 
-
-idno = 12345
+idno = pickler
 test = db.query(
 """
 SELECT *
@@ -238,7 +238,7 @@ WHERE id = %d
 )
 print(test)
 
-idno = 12345
+idno = pickler
 test = db.query(
 """
 SELECT *
