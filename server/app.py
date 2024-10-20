@@ -77,7 +77,17 @@ def fetch_user(user_id: int):
 
 ## Networks
 @app.route('/api/fetch/network', methods=['GET'])
-def fetch_network():
+def fetch_network(network_id):
+    
+    pickling = db.query(
+        """
+        SELECT *
+        FROM connections
+        WHERE user_id = %d
+        AND network_id = %d
+        """ % (current_user['user_id'])
+    )
+    
     network = {
     'nodes': [
       { 'id': 'You', 'name': 'You' },
@@ -93,12 +103,12 @@ def fetch_network():
     return jsonify(network)
 
 @app.route('/api/create/network', methods=['GET'])
-def create_network():
+def create_network(name):
     return None
 
 ## Connections
 @app.route('/api/fetch/connection', methods=['GET'])
-def fetch_connection():
+def fetch_connection(connID: int):
     return None
 
 @app.route('/api/update/connection', methods=['GET'])
