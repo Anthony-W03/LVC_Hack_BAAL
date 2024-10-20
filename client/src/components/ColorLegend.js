@@ -6,7 +6,7 @@ const ColorLegend = () => {
     { name: 'You', color: '#70877F' },
     { name: 'Selected', color: '#EECF6D' },
     { name: 'Direct Connections', color: '#2F2963' },
-    { name: 'Outer Connections', color: '#454372' },
+    { name: 'Outer Connections', color: '#79779B' },
   ];
 
   return (
