@@ -215,6 +215,10 @@ SELECT * FROM connections;
 print(test4)
 '''
 
+
+
+
+'''
 username = 'John_Doe'
 password = 'pw1'
 pickling = db.query(
@@ -253,6 +257,54 @@ test = db.query(
 SELECT *
 FROM connections
 WHERE user_id = '%s'
+""" % idno
+)
+print(test)
+'''
+
+def get_max_id(table_name):
+    result = db.query(
+        """
+        SELECT max(id) FROM %s
+        """ % table_name
+    )
+    return result[0][0]
+
+print(get_max_id("connections"))
+
+'''
+idno = 12345
+test = db.query(
+"""
+SELECT *
+FROM networks
+WHERE user_id = %d
+""" % idno
+)
+print(test)
+'''
+
+def create_network(name):
+
+    new_max_id = get_max_id("networks") + 1
+
+    db.query(
+        """
+        INSERT INTO networks(id, name, user_id)
+        VALUES (%d, '%s', %d)
+        """ % (new_max_id, name, idno)
+    )
+    
+    return None
+
+#create_network("test_net1")
+
+idno = 12345
+test = db.query(
+"""
+SELECT *
+FROM networks
+WHERE user_id = %d
 """ % idno
 )
 print(test)

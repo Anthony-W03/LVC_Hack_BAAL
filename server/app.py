@@ -107,8 +107,26 @@ def fetch_network(network_id):
     # Return the json network
     return jsonify(network)
 
+def get_next_id(table_name):
+    result = db.query(
+        """
+        SELECT max(id) FROM %s
+        """ % table_name
+    )
+    return result[0][0] + 1
+
 @app.route('/api/create/network', methods=['GET'])
 def create_network(name):
+
+    new_max_id = get_next_id("networks")
+
+    db.query(
+        """
+        INSERT INTO networks(id, name, user_id)
+        VALUES (%d, %s, %d)
+        """ % (new_max_id, name, current_user['user_id'])
+    )
+    
     return None
 
 ## Connections
