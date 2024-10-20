@@ -9,8 +9,8 @@ With connections to Linkedin so that you can quickly populate information, AI em
 
 ## TechStack
 
-React-DOM - Frontend
-Flask - Backend
+- React-DOM - Frontend
+- Flask - Backend
 
 ## Current Features
 
