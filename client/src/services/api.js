@@ -6,7 +6,7 @@ const API_BASE_URL = 'http://localhost:5000/api';
  * 
  * @param {int} userID 
  * @param {int} networkID 
- * @returns 
+ * @returns Json Object: {}
  */
 export const fetchNetworkData = (userID, networkID) => {
   return axios.get(`${API_BASE_URL}/fetch/network`);
@@ -15,7 +15,7 @@ export const fetchNetworkData = (userID, networkID) => {
 /**
  * 
  * @param {int} userId 
- * @returns Json Object: {}
+ * @returns Json Object: {'id': int, 'fname': string, 'lname': string, 'email': string}
  */
 export const fetchNodeDetails = (userId) => {
   return axios.get(`${API_BASE_URL}/fetch/user/${userId}`);
@@ -25,11 +25,11 @@ export const fetchNodeDetails = (userId) => {
  * 
  * @param {string} email 
  * @param {string} password 
- * @returns Json Object: {}
+ * @returns Json Object: {vaildLogin: boolean, userID: int}
  */
 export const isLogin = (email, password) => {
   return axios.post(`${API_BASE_URL}/validate/login`, { email, password });
-}; //JSON Object (vaildLogin: true/false, userID: int)
+};
 
 /**
  * 
