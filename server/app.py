@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from postgres_utils import sqlUtils
+from dataclasses import dataclass
+from psycopg2 import sql
 
 # Create our internal App.
 app = Flask(__name__)
@@ -15,31 +17,33 @@ current_user = {'user_id':None,
                 'email':None,
                 'password':None,
                 'fname':None,
-                'lname':None}
+                'lname':None,
+                'username':None}
 networks = {}
 
-@dataclass
-class User:
+def build_user_networks():
     pass
-
-@dataclass
-class Network:
-    pass
-
-@dataclass
-class Connection:
-    pass
-
-def is_datatype(tuple, datatype) -> bool:
-    all
 
 ## User
 @app.route('/api/validate/login', methods=['GET'])
 def validate_login(email: str, password: str):
-    cmd = f'SELECT username, fname, lname, email FROM useraccounts WHERE email = {email}, password = {password};'
+    cmd = """
+            SELECT *
+            FROM useraccounts
+            WHERE email = '%s'
+            AND password = '%s';
+            """ % (email, password)
     results = db.query(cmd)
     if len(results) == 1:
-        print(results[0])
+        # for current_users
+        current_user['user_id'] = results[0][0]
+        current_user['username'] = results[0][1]
+        current_user['fname'] = results[0][2]
+        current_user['lname'] = results[0][3]
+        current_user['email'] = results[0][4]
+        current_user['password'] = results[0][0]
+        
+
         return jsonify({'vaildLogin': True, 'userID': -1})
     else:
         # There was not a valid login.
@@ -117,11 +121,7 @@ def fetch_connections_menu(user_id: int, network_id: int):
 
 if __name__ == '__main__':
     db.connect()
-    email = 'JohnDoe42@gmail.com'
-    password = 'pw1'
-    cmd = f'''SELECT username, fname, lname, email FROM useraccounts WHERE email = \"{email}\" AND password = \"{password}\";'''
-    print(cmd)
-    print(db.query(cmd))
+    print(validate_login('JohnDoe42@gmail.com', 'pw1'))
     app.run(debug=True)
     db.close() # Close the connection after the app is closed. Note: This is not ideal.
     

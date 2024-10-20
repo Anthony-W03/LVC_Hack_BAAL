@@ -2,6 +2,7 @@ import psycopg2
 import boto3, os, time
 from dotenv import load_dotenv, dotenv_values 
 
+
 # loading variables from .env file
 load_dotenv() 
 
@@ -34,11 +35,11 @@ class sqlUtils():
             self.open = False
         else: return    
         
-    def query(self, cmd: str):
+    def query(self, cmd: str, args: list = []):
         if self.open == False: return None
         try: 
             curr = self.connection.cursor()
-            curr.execute(cmd)
+            curr.execute(cmd, args)
             return curr.fetchall()
         except:
             return None
