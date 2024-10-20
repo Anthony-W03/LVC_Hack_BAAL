@@ -16,12 +16,23 @@ const NetworkGraph = () => {
     ]
   };
 
+  const getNodeColor = (node) => {
+    if (node.id === 'You') {
+      return '#70877F';
+    }
+    const isConnectedToYou = data.links.some(
+      link => link.source === 'You' && link.target === node.id
+    );
+    return isConnectedToYou ? '#2F2963' : '#79779B';
+  };
+
   return (
     <ForceGraph2D
       graphData={data}
       nodeLabel="name"
-      nodeAutoColorBy="id"
+      nodeColor={getNodeColor}
       onNodeClick={(node) => {
+        node.nodeColor = '#EECF6D'; //fix
         alert(`Clicked on ${node.name}`);
       }}
     />

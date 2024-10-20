@@ -1,0 +1,23 @@
+.App {
+    text-align: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .main-content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .viz-container {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Ensure the NetworkViz component takes up the full container */
+  .viz-container > div {
+    width: 100% !important;
+    height: 100% !important;
+  }

@@ -2,11 +2,19 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from interact import User, Network
 
+# Create our internal App.
 app = Flask(__name__)
 CORS(app)  # This allows CORS for all domains on all routes
 
-@app.route('/api/node/<node_id>', methods=['GET'])
-def get_user_info(user_id: int):
+# Set some important variables.
+
+## User
+@app.route('/api/validate/login', methods=['GET'])
+def valid_login():
+    return None
+
+@app.route('/api/fetch/user', methods=['GET'])
+def fetch_user(user_id: int):
     # Create a user object. (If the user exists)
     user = User(user_id)
     
@@ -28,6 +36,40 @@ def get_user_info(user_id: int):
     
     # Return as a json object.
     return jsonify(user_data)
+
+## Networks
+@app.route('/api/fetch/network', methods=['GET'])
+def fetch_network():
+    network = {
+    'nodes': [
+      { 'id': 'You', 'name': 'You' },
+      { 'id': 'Alice', 'name': 'Alice' },
+      { 'id': 'Bob', 'name': 'Bob' },
+      { 'id': 'Charlie', 'name': 'Charlie' },
+    ],
+    'links': [
+      { 'source': 'You', 'target': 'Alice' },
+      { 'source': 'You', 'target': 'Bob' },
+      { 'source': 'Alice', 'target': 'Charlie' },
+    ]}
+    return network
+
+@app.route('/api/create/network', methods=['GET'])
+def create_network():
+    return None
+
+## Connections
+@app.route('/api/fetch/connection', methods=['GET'])
+def fetch_connection():
+    return None
+
+@app.route('/api/update/connection', methods=['GET'])
+def update_connection():
+    return None
+
+@app.route('/api/create/connection', methods=['GET'])
+def create_connection():
+    return None
 
 
 @app.route('/api/graph', methods=['GET'])
