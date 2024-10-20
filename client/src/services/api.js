@@ -69,3 +69,14 @@ export const updateConnection = (connectionID, networkID) => {
 export const createConnection = (networkID, email, fname, lname, source, target) => {
   return axios.post(`${API_BASE_URL}/create/connection`, { userID, networkID });
 };
+
+/**
+ * 
+ * @param {*} userID 
+ * @param {*} networkID 
+ * @param {*} connectionID 
+ * @returns 
+ */
+export const fetchConnectionMenu = (userID, networkID, connectionID) => {
+  return axios.get(`${API_BASE_URL}/fetch/connection-menu`, { userID, networkID, connectionID });
+}
