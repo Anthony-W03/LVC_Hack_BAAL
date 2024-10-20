@@ -22,6 +22,8 @@ current_user = {'user_id':None,
 networks = {}
 
 # Get a new incremented id, per some id field.
+def get_next_id(table: str, id_field: str):
+    return -1
 
 ## User
 @app.route('/api/validate/login', methods=['GET'])
@@ -71,7 +73,7 @@ def fetch_user():
 @app.route('/api/fetch/network', methods=['GET'])
 def fetch_network(network_id):
     # query all relevant connections.
-    cmd = db.query(
+    results = db.query(
         """
         SELECT *
         FROM connections
@@ -79,7 +81,6 @@ def fetch_network(network_id):
         AND network_id = %d
         """ % (current_user['user_id'], network_id)
     )
-    results = db.query(cmd)
     
     # The internal network data
     network = {'nodes':[], 'links':[]}
