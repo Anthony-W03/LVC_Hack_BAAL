@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from postgres_utils import sqlUtils
-from dataclasses import dataclass
+from db_access import GlobalDatabasePool, DatabaseAccessor
 
 # Create our internal App.
 app = Flask(__name__)
@@ -153,6 +153,12 @@ def fetch_connections_menu(user_id: int, network_id: int):
     return jsonify(menu)
 
 if __name__ == '__main__':
+    # Initialize the database pool for connections.
+    GlobalDatabasePool.initialize(
+        minconn=1,
+        maxconn=10
+    )
+    
     db.connect()
     app.run(debug=True)
     db.close() # Close the connection after the app is closed. Note: This is not ideal.
