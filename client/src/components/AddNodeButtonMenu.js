@@ -14,7 +14,7 @@ const AddNodeMenu = ({ onClose }) => {
     // Fetch menu options when component mounts
     const getMenuOptions = async () => {
       try {
-        const options = await fetchConnectionMenu();
+        const options = await fetchConnectionMenu(1, 1, 1);
         setMenuOptions(options);
       } catch (error) {
         console.error('Error fetching menu options:', error);

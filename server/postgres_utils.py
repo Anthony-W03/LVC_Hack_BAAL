@@ -6,10 +6,6 @@ from pathlib import Path
 # loading variables from .env file
 load_dotenv() 
 
-def get_query(path: Path):
-    with open('', 'r') as fd:
-        pass
-
 class sqlUtils():
     def __init__(self):
         self.config = {

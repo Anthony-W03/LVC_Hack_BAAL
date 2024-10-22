@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from postgres_utils import sqlUtils
-from db_access import GlobalDatabasePool, DatabaseAccessor
 
 # Create our internal App.
 app = Flask(__name__)
@@ -70,15 +69,18 @@ def fetch_user():
         return jsonify(current_user)
 
 ## Networks
-@app.route('/api/fetch/network', methods=['GET'])
-def fetch_network(network_id):
+@app.route('/api/fetch/network', methods=['POST'])
+def fetch_network():
+    args = request.get_json()
+    userID, networkID = args.values()
+        
     # query all relevant connections.
     results = db.query(
         """
         SELECT *
         FROM connections
-        WHERE user_id = %d
-        AND network_id = %d
+        WHERE user_id = %s
+        AND network_id = %s
         """ % (current_user['user_id'], network_id)
     )
     
@@ -131,7 +133,7 @@ def create_network(name):
 
 ## Connections
 @app.route('/api/fetch/connection', methods=['GET'])
-def fetch_connection(connID: int):
+def fetch_connection(user_id: int, network_id: int):
     return None
 
 @app.route('/api/update/connection', methods=['GET'])
@@ -146,20 +148,15 @@ def create_connection():
 def get_graph_data(user_id: int, network_id: int):
     return None
 
-@app.route('/fetch/connection-menu', methods=['GET'])
-def fetch_connections_menu(user_id: int, network_id: int):
+@app.route('/api/fetch/connection-menu', methods=['POST'])
+def fetch_connections_menu():
+    print(request.values)
     menu = [{'connection_id': -1, 'fname':"fname", "lname":"lname", "email":"email"},
             {'connection_id': -2, 'fname':"fname2", "lname":"lname2", "email":"email2"}]
     return jsonify(menu)
 
 if __name__ == '__main__':
-    # Initialize the database pool for connections.
-    GlobalDatabasePool.initialize(
-        minconn=1,
-        maxconn=10
-    )
-    
     db.connect()
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
     db.close() # Close the connection after the app is closed. Note: This is not ideal.
     
