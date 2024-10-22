@@ -42,18 +42,15 @@ export const fetchUser = (userID) => {
  * @param {*} userID 
  * @param {*} networkID 
  */
-export const fetchNetwork = (userID, networkID) => {
-  axios
-    .post(`${API_BASE_URL}/fetch/network`, {
-      userID: userID, 
-      networkID: networkID 
-    }).then(response => {
-      viewData(response);
-      return response.data;
-    }).catch(err => {
-      // TODO: Handle error methodology.
-      console.log(err);
-    });
+export const fetchNetwork = async (userID, networkID) => {
+  try {
+    const response = await axios.post(`${API_BASE_URL}/fetch/network`, { userID, networkID });
+    console.log('Network response:', response); // Add this line for debugging
+    return { data: response.data }; // Wrap the response data in an object
+  } catch (error) {
+    console.error('Error in fetchNetwork:', error);
+    throw error; // Re-throw the error to be caught in the component
+  }
 };
 
 /**

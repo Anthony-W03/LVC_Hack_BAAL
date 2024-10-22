@@ -33,14 +33,17 @@ function NetworkViz() {
       const userID = 1;
       const networkID = 1;
 
-      const response = await fetchNetwork(userID, networkID);
-      if (response.data) {
-        setData(response.data);
+      const result = await fetchNetwork(userID, networkID);
+      console.log('Fetch result:', result); // Add this line for debugging
+      if (result && result.data) {
+        setData(result.data);
       } else {
-        console.error('Failed to fetch network data');
+        console.error('Failed to fetch network data or data is undefined');
+        setData({ nodes: [], links: [] }); // Set empty data as fallback
       }
     } catch (error) {
       console.error('Error fetching network data:', error);
+      setData({ nodes: [], links: [] }); // Set empty data as fallback
     }
   };
 
