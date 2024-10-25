@@ -1,9 +1,8 @@
 import psycopg2, os
-from psycopg2 import pool
 from contextlib import contextmanager
-from dotenv import load_dotenv, dotenv_values
-from typing import Self, Generator
+from typing import Generator
 from psycopg2.extensions import connection
+
 
 class DatabasePool:
     """
@@ -11,26 +10,27 @@ class DatabasePool:
     Once this class is initialized, all methods are global class methods which
     interact statically across all instances.
     """
+
     _instance = None
     pool = None
     config = {
-            "database":os.getenv('DB_DATABASE'),
-            "host":os.getenv('DB_URL'),
-            "user":os.getenv('DB_USERNAME'),
-            "password":os.getenv('DB_PASSWORD'),
-            "port":os.getenv('DB_PORT')
-        }
+        "database": os.getenv("DB_DATABASE"),
+        "host": os.getenv("DB_URL"),
+        "user": os.getenv("DB_USERNAME"),
+        "password": os.getenv("DB_PASSWORD"),
+        "port": os.getenv("DB_PORT"),
+    }
 
-    def __new__(cls) -> 'DatabasePool':
+    def __new__(cls) -> "DatabasePool":
         if cls._instance is None:
             cls._instance = super(DatabasePool, cls).__new__(cls)
             cls._instance.pool = None
         return cls._instance
 
     @classmethod
-    def initialize(cls, minconn: int, maxconn: int) -> 'DatabasePool':
+    def initialize(cls, minconn: int, maxconn: int) -> "DatabasePool":
         """
-        Initializes the database connection pool with a minimum and maximum number of connections 
+        Initializes the database connection pool with a minimum and maximum number of connections
         and returns the singleton instance of the DatabasePool.
 
         If the pool is already initialized, it returns the existing instance.
@@ -45,7 +45,9 @@ class DatabasePool:
         """
         if cls._instance is None:
             cls._instance = cls()
-            cls.pool = psycopg2.pool.ThreadedConnectionPool(minconn, maxconn, **cls.config)
+            cls.pool = psycopg2.pool.ThreadedConnectionPool(
+                minconn, maxconn, **cls.config
+            )
         return cls._instance
 
     @classmethod
@@ -53,21 +55,23 @@ class DatabasePool:
     def get_connection(cls) -> Generator[connection, None, None]:
         """
         This method yields a database connection from the connection pool for use
-        within a `with` statement. It ensures that the connection is properly 
-        returned to the pool after the block is executed, even if an exception 
+        within a `with` statement. It ensures that the connection is properly
+        returned to the pool after the block is executed, even if an exception
         is raised.
 
         Raises:
-            RuntimeError: If the database connection pool has not been initialized 
+            RuntimeError: If the database connection pool has not been initialized
                         (i.e., `cls.pool is None`).
 
         Yields:
-            Generator[connection, None, None]: A database connection from the pool 
-                                            that can be used within the `with` 
+            Generator[connection, None, None]: A database connection from the pool
+                                            that can be used within the `with`
                                             statement.
         """
         if cls.pool is None:
-            raise RuntimeError("Database pool not initialized. Call DatabasePool.initialize() first.")
+            raise RuntimeError(
+                "Database pool not initialized. Call DatabasePool.initialize() first."
+            )
         conn = cls.pool.getconn()
         try:
             yield conn
@@ -82,7 +86,7 @@ class DatabasePool:
         if cls.pool:
             cls.pool.closeall()
             cls.pool = None
-            
+
     @classmethod
     def destroy(cls) -> None:
         """
@@ -94,32 +98,34 @@ class DatabasePool:
                 cls._instance.pool.closeall()
             cls._instance = None
 
+
 class DatabaseAccessor:
     """
     A class used to manage database access and cursor handling.
 
-    This class provides a convenient way to retrieve and manage a database 
-    cursor using a context manager, ensuring that database transactions 
-    are either committed or rolled back appropriately, and that resources 
+    This class provides a convenient way to retrieve and manage a database
+    cursor using a context manager, ensuring that database transactions
+    are either committed or rolled back appropriately, and that resources
     are properly cleaned up.
 
     Yields:
-        psycopg2.extensions.cursor: A database cursor object that can be used 
+        psycopg2.extensions.cursor: A database cursor object that can be used
         to execute SQL queries within a `with` block.
     """
+
     @contextmanager
     def get_cursor(self):
         """
         A context manager that provides a database cursor from the connection pool.
 
-        This method uses the connection pool to retrieve a database connection and 
-        then creates a cursor for executing SQL queries. It ensures that any changes 
-        are committed to the database if the operation is successful, or rolled back 
-        in case of an exception. The cursor is automatically closed at the end of the 
+        This method uses the connection pool to retrieve a database connection and
+        then creates a cursor for executing SQL queries. It ensures that any changes
+        are committed to the database if the operation is successful, or rolled back
+        in case of an exception. The cursor is automatically closed at the end of the
         block, whether the operation succeeds or fails.
 
         Usage example:
-        
+
         ```
         with DatabaseAccessor().get_cursor() as cursor:
             cursor.execute("SELECT * FROM my_table")
@@ -128,9 +134,9 @@ class DatabaseAccessor:
 
         Yields:
             psycopg2.extensions.cursor: A cursor for executing database queries.
-        
+
         Raises:
-            Exception: If an exception occurs during the execution of the SQL queries, 
+            Exception: If an exception occurs during the execution of the SQL queries,
                        the transaction is rolled back, and the exception is re-raised.
         """
         with DatabasePool.get_connection() as conn:
@@ -143,3 +149,26 @@ class DatabaseAccessor:
                 raise
             finally:
                 cursor.close()
+                
+
+    def get_next_id(self, table_name):
+        """
+        Retrieve the next highest ID from a given table.
+
+        Args:
+            table_name (str): The name of the table from which to get the next ID.
+
+        Returns:
+            int: The next ID value (max ID + 1).
+        """
+        with self.get_cursor() as cursor:
+            query = (
+                """
+                SELECT max(id) FROM %s
+                """
+                % table_name
+            )
+            cursor.execute(query)
+            result = cursor.fetchone()  # Fetch the single result from the query
+            next_id = (result[0] or 0) + 1  # Ensure 0 if None, then add 1
+            return next_id
